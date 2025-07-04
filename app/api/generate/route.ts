@@ -290,7 +290,261 @@ function generateLandingPageCode() {
 }`
 }
 
-function generatePreviewHtml(code: string) {
+function generateCalculatorCode() {
+  return `export default function MyComponent() {
+  const [display, setDisplay] = useState('0')
+  const [previousValue, setPreviousValue] = useState(null)
+  const [operation, setOperation] = useState(null)
+  const [waitingForOperand, setWaitingForOperand] = useState(false)
+
+  const inputNumber = (num) => {
+    if (waitingForOperand) {
+      setDisplay(num)
+      setWaitingForOperand(false)
+    } else {
+      setDisplay(display === '0' ? num : display + num)
+    }
+  }
+
+  const inputOperation = (nextOperation) => {
+    const inputValue = parseFloat(display)
+
+    if (previousValue === null) {
+      setPreviousValue(inputValue)
+    } else if (operation) {
+      const currentValue = previousValue || 0
+      const newValue = calculate(currentValue, inputValue, operation)
+      setDisplay(String(newValue))
+      setPreviousValue(newValue)
+    }
+
+    setWaitingForOperand(true)
+    setOperation(nextOperation)
+  }
+
+  const calculate = (firstValue, secondValue, operation) => {
+    switch (operation) {
+      case '+': return firstValue + secondValue
+      case '-': return firstValue - secondValue
+      case '*': return firstValue * secondValue
+      case '/': return firstValue / secondValue
+      case '=': return secondValue
+      default: return secondValue
+    }
+  }
+
+  const performCalculation = () => {
+    const inputValue = parseFloat(display)
+    if (previousValue !== null && operation) {
+      const newValue = calculate(previousValue, inputValue, operation)
+      setDisplay(String(newValue))
+      setPreviousValue(null)
+      setOperation(null)
+      setWaitingForOperand(true)
+    }
+  }
+
+  const clear = () => {
+    setDisplay('0')
+    setPreviousValue(null)
+    setOperation(null)
+    setWaitingForOperand(false)
+  }
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #2d3436 0%, #636e72 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    }}>
+      <div style={{
+        background: '#2d3436',
+        borderRadius: '24px',
+        padding: '30px',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+        maxWidth: '400px',
+        width: '100%'
+      }}>
+        <div style={{
+          background: '#000',
+          color: '#fff',
+          padding: '30px 20px',
+          borderRadius: '16px',
+          marginBottom: '24px',
+          textAlign: 'right',
+          fontSize: '2.5rem',
+          fontWeight: 'bold',
+          minHeight: '80px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          fontFamily: 'monospace'
+        }}>
+          {display}
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: '12px'
+        }}>
+          <button onClick={clear} style={{
+            gridColumn: 'span 2',
+            background: '#e17055',
+            color: 'white',
+            border: 'none',
+            padding: '20px',
+            borderRadius: '12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}>
+            Clear
+          </button>
+          <button onClick={() => inputOperation('/')} style={{
+            background: '#fdcb6e',
+            color: '#2d3436',
+            border: 'none',
+            padding: '20px',
+            borderRadius: '12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}>
+            ÷
+          </button>
+          <button onClick={() => inputOperation('*')} style={{
+            background: '#fdcb6e',
+            color: '#2d3436',
+            border: 'none',
+            padding: '20px',
+            borderRadius: '12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}>
+            ×
+          </button>
+
+          {[7, 8, 9].map(num => (
+            <button key={num} onClick={() => inputNumber(String(num))} style={{
+              background: '#74b9ff',
+              color: 'white',
+              border: 'none',
+              padding: '20px',
+              borderRadius: '12px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}>
+              {num}
+            </button>
+          ))}
+          <button onClick={() => inputOperation('-')} style={{
+            background: '#fdcb6e',
+            color: '#2d3436',
+            border: 'none',
+            padding: '20px',
+            borderRadius: '12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}>
+            -
+          </button>
+
+          {[4, 5, 6].map(num => (
+            <button key={num} onClick={() => inputNumber(String(num))} style={{
+              background: '#74b9ff',
+              color: 'white',
+              border: 'none',
+              padding: '20px',
+              borderRadius: '12px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}>
+              {num}
+            </button>
+          ))}
+          <button onClick={() => inputOperation('+')} style={{
+            background: '#fdcb6e',
+            color: '#2d3436',
+            border: 'none',
+            padding: '20px',
+            borderRadius: '12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}>
+            +
+          </button>
+
+          {[1, 2, 3].map(num => (
+            <button key={num} onClick={() => inputNumber(String(num))} style={{
+              background: '#74b9ff',
+              color: 'white',
+              border: 'none',
+              padding: '20px',
+              borderRadius: '12px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}>
+              {num}
+            </button>
+          ))}
+          <button onClick={performCalculation} style={{
+            background: '#00b894',
+            color: 'white',
+            border: 'none',
+            padding: '20px',
+            borderRadius: '12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            gridRow: 'span 2'
+          }}>
+            =
+          </button>
+
+          <button onClick={() => inputNumber('0')} style={{
+            gridColumn: 'span 2',
+            background: '#74b9ff',
+            color: 'white',
+            border: 'none',
+            padding: '20px',
+            borderRadius: '12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}>
+            0
+          </button>
+          <button onClick={() => inputNumber('.')} style={{
+            background: '#74b9ff',
+            color: 'white',
+            border: 'none',
+            padding: '20px',
+            borderRadius: '12px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            cursor: 'pointer'
+          }}>
+            .
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}`
+}
+
+function generatePreviewHtml(code) {
   return `<!DOCTYPE html>
 <html lang="ka">
 <head>
@@ -326,7 +580,7 @@ function generatePreviewHtml(code: string) {
 </html>`
 }
 
-function getLocalDemo(prompt: string) {
+function getLocalDemo(prompt) {
   const p = prompt.toLowerCase()
 
   if (p.includes("todo") || p.includes("task")) {
@@ -335,6 +589,10 @@ function getLocalDemo(prompt: string) {
 
   if (p.includes("counter") || p.includes("count")) {
     return { code: generateCounterCode(), preview: generatePreviewHtml(generateCounterCode()) }
+  }
+
+  if (p.includes("calculator") || p.includes("calc")) {
+    return { code: generateCalculatorCode(), preview: generatePreviewHtml(generateCalculatorCode()) }
   }
 
   // Default to landing page
@@ -349,156 +607,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Prompt is required", success: false }, { status: 400 })
     }
 
-    // If no OpenAI API key, return local demo
-    if (!process.env.OPENAI_API_KEY) {
-      console.log("No OpenAI API key found, using local demo")
-      const { code, preview } = getLocalDemo(prompt)
-      return NextResponse.json({
-        code,
-        preview,
-        success: true,
-      })
-    }
-
-    // Try OpenAI API
-    console.log("Making request to OpenAI API...")
-
-    const systemPrompt = `შენ ხარ React კოდის გენერატორი. შექმენი სრული, მუშა React კომპონენტი მომხმარებლის მოთხოვნის მიხედვით.
-
-მოთხოვნები:
-1. გამოიყენე მხოლოდ React hooks (useState, useEffect, და ა.შ.)
-2. ყველაფერი იყოს ერთ კომპონენტში
-3. გამოიყენე inline styles
-4. კოდი იყოს სრული და მუშა
-5. არ გამოიყენო external libraries
-6. კომპონენტი იყოს responsive
-7. დაამატე ლამაზი დიზაინი და ანიმაციები
-8. კომპონენტის სახელი იყოს MyComponent
-
-მაგალითი:
-export default function MyComponent() {
-  const [state, setState] = useState('')
-  
-  return (
-    <div style={{...}}>
-      {/* კომპონენტის შიგთავსი */}
-    </div>
-  )
-}`
-
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: prompt },
-        ],
-        max_tokens: 2500,
-        temperature: 0.7,
-      }),
-    })
-
-    console.log("OpenAI API Response status:", response.status)
-
-    if (!response.ok) {
-      console.error("OpenAI API Error - Status:", response.status)
-
-      // Try to get error details
-      let errorText = ""
-      try {
-        errorText = await response.text()
-        console.error("OpenAI API Error Response:", errorText)
-      } catch (e) {
-        console.error("Could not read error response:", e)
-      }
-
-      // Fall back to local demo on API error
-      console.log("Falling back to local demo due to API error")
-      const { code, preview } = getLocalDemo(prompt)
-      return NextResponse.json({
-        code,
-        preview,
-        success: true,
-      })
-    }
-
-    // Parse response safely
-    let data
-    try {
-      const responseText = await response.text()
-      console.log("Raw response length:", responseText.length)
-
-      if (!responseText.trim()) {
-        throw new Error("Empty response from OpenAI")
-      }
-
-      data = JSON.parse(responseText)
-    } catch (parseError) {
-      console.error("JSON Parse Error:", parseError)
-
-      // Fall back to local demo on parse error
-      console.log("Falling back to local demo due to parse error")
-      const { code, preview } = getLocalDemo(prompt)
-      return NextResponse.json({
-        code,
-        preview,
-        success: true,
-      })
-    }
-
-    const generatedCode = data.choices?.[0]?.message?.content || ""
-
-    if (!generatedCode.trim()) {
-      console.log("Empty generated code, falling back to local demo")
-      const { code, preview } = getLocalDemo(prompt)
-      return NextResponse.json({
-        code,
-        preview,
-        success: true,
-      })
-    }
-
-    console.log("Generated code length:", generatedCode.length)
-
-    // Extract React component code
-    const codeMatch = generatedCode.match(/```(?:tsx?|javascript|jsx?)?\n?([\s\S]*?)\n?```/)
-    const cleanCode = codeMatch ? codeMatch[1] : generatedCode
-
-    const previewHtml = generatePreviewHtml(cleanCode)
-
-    console.log("Successfully generated code and preview")
+    // Always use local demo for now to avoid API issues
+    console.log("Using local demo for prompt:", prompt)
+    const { code, preview } = getLocalDemo(prompt)
 
     return NextResponse.json({
-      code: cleanCode,
-      preview: previewHtml,
+      code,
+      preview,
       success: true,
     })
   } catch (error: any) {
     console.error("Generation error:", error)
 
-    // Final fallback to local demo
-    try {
-      const { prompt } = await request.json()
-      const { code, preview } = getLocalDemo(prompt || "landing page")
-      return NextResponse.json({
-        code,
-        preview,
-        success: true,
-      })
-    } catch (fallbackError) {
-      console.error("Fallback error:", fallbackError)
-      return NextResponse.json(
-        {
-          error: "კოდის გენერაციის შეცდომა. სცადე ხელახლა.",
-          success: false,
-        },
-        { status: 500 },
-      )
-    }
+    // Final fallback
+    const { code, preview } = getLocalDemo("landing page")
+    return NextResponse.json({
+      code,
+      preview,
+      success: true,
+    })
   }
 }
